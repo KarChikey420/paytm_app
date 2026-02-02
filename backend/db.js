@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 mongoose.connect(process.env.mongo_link)
+console.log("db connected")
 
 const PaySchema = mongoose.Schema(
     {
