@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-const mainrouter=require("./routes/index.js");
+import mainrouter from './routes/index.js'
 
 const app=express()
 app.use(cors())

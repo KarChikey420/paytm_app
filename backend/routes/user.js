@@ -1,9 +1,8 @@
 import express from 'express'
 import zod from 'zod'
-import { User } from "../db/index.js"
-import JWT_SECRET from './config'
+import { User, Account } from "../db.js"
+import JWT_SECRET from './config.js'
 import jwt from 'jsonwebtoken'
-import { Account } from '../db.js'
 import { authMiddleware } from '../middleware.js'
 
 const router=express.Router()

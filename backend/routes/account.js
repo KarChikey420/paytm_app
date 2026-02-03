@@ -1,6 +1,6 @@
 import express from "express"
 import mongoose from "mongoose"
-import { Account } from "../db";
+import { Account } from "../db.js";
 
 const router=express.Router();
 

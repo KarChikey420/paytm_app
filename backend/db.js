@@ -20,7 +20,7 @@ const UserSchema = mongoose.Schema(
             required: true,
             minlength: 6
         },
-        Email:{
+        email:{
             type: String,
             required: true,
             unique: true,
@@ -30,17 +30,17 @@ const UserSchema = mongoose.Schema(
     }
 )
 
-const AccountSchema=mongoose.Schema(
-    userId={
+const AccountSchema=mongoose.Schema({
+    userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
     },
-    balance={
+    balance:{
         type:Number,
         required:true
     }
-)
+})
 const User=mongoose.model("User",UserSchema);
 const Account=mongoose.model("Account", AccountSchema);
 
