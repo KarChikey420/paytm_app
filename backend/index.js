@@ -7,3 +7,4 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/api/v1",mainrouter)
+app.listen(3000)
