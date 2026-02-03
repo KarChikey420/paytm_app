@@ -1,12 +1,11 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-
 dotenv.config()
 
 mongoose.connect(process.env.mongo_link)
 console.log("db connected")
 
-const PaySchema = mongoose.Schema(
+const UserSchema = mongoose.Schema(
     {
         username:{
             type: String,
@@ -30,6 +29,19 @@ const PaySchema = mongoose.Schema(
         }
     }
 )
-const Paytem=mongoose.model("Pay",PaySchema)
 
-export {Paytem}
+const AccountSchema=mongoose.Schema(
+    userId={
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+        required:true
+    },
+    balance={
+        type:Number,
+        required:true
+    }
+)
+const User=mongoose.model("User",UserSchema)
+const Account=mongoose.model("Account", AccountSchema)
+
+export {User,Account}

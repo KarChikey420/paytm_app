@@ -28,7 +28,7 @@ router.post("/signup",async(req,res)=>{
 
     if (user?._id){
         return res.json({
-            message:"Email already taken / incorrect inputs"
+            message : "Email already taken / incorrect inputs",
         })
     }
     
@@ -40,11 +40,25 @@ router.post("/signup",async(req,res)=>{
         massage:"User created successfully",
         Token:Token
     })
-        
+})
+
+router.get("/bulk",async(req, res)=>{
+    const filter = req.query.filter ? req.query.filter.trim() : "";
+
+    const users = await User.find({
+        $or: [{
+            username: {
+                $regex: new RegExp(filter, "i")
+            }
+        }]
+    });
     
-    return res.json({
-        message: "User created successfully",
-        userId: dbUser._id
+    res.json({
+        user:users.map(user=>({
+            username:user.username,
+            _id:user._id,
+            email:user.email
+        }))
     })
 })
 export default router
