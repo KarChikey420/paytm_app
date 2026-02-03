@@ -2,8 +2,8 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
 
-mongoose.connect(process.env.mongo_link)
-console.log("db connected")
+mongoose.connect(process.env.mongo_link);
+console.log("db connected");
 
 const UserSchema = mongoose.Schema(
     {
@@ -41,7 +41,7 @@ const AccountSchema=mongoose.Schema(
         required:true
     }
 )
-const User=mongoose.model("User",UserSchema)
-const Account=mongoose.model("Account", AccountSchema)
+const User=mongoose.model("User",UserSchema);
+const Account=mongoose.model("Account", AccountSchema);
 
 export {User,Account}

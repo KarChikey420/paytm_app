@@ -3,6 +3,7 @@ import zod from 'zod'
 import { User } from "../db/index.js"
 import JWT_SECRET from './config'
 import jwt from 'jsonwebtoken'
+import { Account } from '../db.js'
 
 const router=express.Router()
 
@@ -22,25 +23,68 @@ router.post("/signup",async(req,res)=>{
         })
     }
 
-    const user = await User.findOne({
+    const existingUser = await User.findOne({
         username:body.username
     })
 
-    if (user?._id){
+    if (existingUser?._id){
         return res.json({
             message : "Email already taken / incorrect inputs",
         })
     }
-    
-    const dbUser=await User.create(body);
-    const Token=jwt.sign({
-        id:dbUser._id
-    },JWT_SECRET)
+
+    const user=await User.create({
+        username:body.username,
+        email:body.email,
+        password:body.password
+    })
+    const userId=user._id;
+
+    await Account.create({
+        userId:userId,
+        balance:1+Math.random()*10000
+    })
+
+    const token=jwt.sign({userId},JWT_SECRET);
     res.json({
-        massage:"User created successfully",
-        Token:Token
+        message:"User created successfully",
+        token:token
     })
 })
+
+const signinSchema=zod.object({
+    email:zod.string().email(),
+    password:zod.string()
+})
+
+router.post("/signing", async(req, res) => {
+    const {success}=signinSchema.safeParse(req.body)
+    if(!success){
+        return res.status(411).json({
+            message:"Incorrect inputs"
+        })
+    }
+    const user = await User.findOne({
+        email:req.body.email,
+        password:req.body.password
+    })
+
+    if(user){
+        const token=jwt.sign({userId:user._id},JWT_SECRET);
+        res.json({
+            token:token
+        });
+
+        res.json({
+            token:token
+        })
+        return
+    }
+    res.status(411).json({
+        message:"Error while logging in"
+    })
+})
+
 
 router.get("/bulk",async(req, res)=>{
     const filter = req.query.filter ? req.query.filter.trim() : "";
