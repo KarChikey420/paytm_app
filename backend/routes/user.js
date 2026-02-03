@@ -4,6 +4,7 @@ import { User } from "../db/index.js"
 import JWT_SECRET from './config'
 import jwt from 'jsonwebtoken'
 import { Account } from '../db.js'
+import { authMiddleware } from '../middleware.js'
 
 const router=express.Router()
 
@@ -85,6 +86,26 @@ router.post("/signing", async(req, res) => {
     })
 })
 
+const updateBody=zod.object({
+    password:zod.string().optional(),
+    firstName:zod.string().optional(),
+    lastName:zod.string().optional()
+})
+router.put("/",authMiddleware,async(req,res)=>{
+    const {success}=updateBody.safeParse(req.body)
+    if(!success){
+        res.status(411).json({
+            message:"Error while updating information"
+        })
+    }
+    await User.updateOne(req.body,{
+        id:req.userId
+    })
+    res.json({
+        message:"Updated successfully"
+    })
+
+})
 
 router.get("/bulk",async(req, res)=>{
     const filter = req.query.filter ? req.query.filter.trim() : "";
