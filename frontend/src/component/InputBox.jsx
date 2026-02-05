@@ -1,8 +1,9 @@
 export function InputBox({label, placeholder, onChange}) {
+    const inputId = `input-${label?.toLowerCase().replace(/\s+/g, '-')}`;
     return <div>
-      <div className="text-sm font-medium text-left py-2">
+      <label htmlFor={inputId} className="text-sm font-medium text-left py-2 block">
         {label}
-      </div>
-      <input onChange={onChange} placeholder={placeholder} className="w-full px-2 py-1 border rounded border-slate-200" />
+      </label>
+      <input id={inputId} onChange={onChange} placeholder={placeholder} className="w-full px-2 py-1 border rounded border-slate-200" />
     </div>
 }

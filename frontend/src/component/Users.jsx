@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "./Button"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:3000/api/v1";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api/v1";
 
 export const Users = () => {
-    // Replace with backend call
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
 
+    const fetchUsers = useCallback(async (searchFilter) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/user/bulk?filter=${searchFilter}`);
+            setUsers(response.data.user || []);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            setUsers([]);
+        }
+    }, []);
+
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/user/bulk?filter=${filter}`)
-            .then(response => {
-                setUsers(response.data.user)
-            })
-            .catch(error => {
-                console.error("Error fetching users:", error)
-                setUsers([])
-            })
-    }, [filter])
+        const timeoutId = setTimeout(() => {
+            fetchUsers(filter);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [filter, fetchUsers]);
 
     return <>
         <div className="font-bold mt-6 text-lg">
@@ -39,24 +44,28 @@ export const Users = () => {
 function User({user}) {
     const navigate = useNavigate();
 
+    const handleSendMoney = () => {
+        if (user?._id && user?.firstName) {
+            navigate(`/send?id=${user._id}&name=${user.firstName}`);
+        }
+    };
+
     return <div className="flex justify-between">
         <div className="flex">
             <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
                 <div className="flex flex-col justify-center h-full text-xl">
-                    {user.firstName[0]}
+                    {user?.firstName?.[0] || 'U'}
                 </div>
             </div>
             <div className="flex flex-col justify-center h-full">
                 <div>
-                    {user.firstName} {user.lastName}
+                    {user?.firstName || ''} {user?.lastName || ''}
                 </div>
             </div>
         </div>
 
         <div className="flex flex-col justify-center h-full">
-            <Button onClick={() => {
-                navigate("/send?id=" + user._id + "&name=" + user.firstName);
-            }} label={"Send Money"} />
+            <Button onClick={handleSendMoney} label={"Send Money"} />
         </div>
     </div>
 }

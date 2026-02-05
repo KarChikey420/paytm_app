@@ -9,6 +9,8 @@ const router=express.Router()
 
 const signupSchema=zod.object({
     username:zod.string(),
+    firstName:zod.string(),
+    lastName:zod.string(),
     email:zod.string().email(),
     password:zod.string()
 })
@@ -35,6 +37,8 @@ router.post("/signup",async(req,res)=>{
 
     const user=await User.create({
         username:body.username,
+        firstName:body.firstName,
+        lastName:body.lastName,
         email:body.email,
         password:body.password
     })
@@ -57,7 +61,7 @@ const signinSchema=zod.object({
     password:zod.string()
 })
 
-router.post("/signing", async(req, res) => {
+router.post("/signin", async(req, res) => {
     const {success}=signinSchema.safeParse(req.body)
     if(!success){
         return res.status(411).json({
@@ -74,10 +78,6 @@ router.post("/signing", async(req, res) => {
         res.json({
             token:token
         });
-
-        res.json({
-            token:token
-        })
         return
     }
     res.status(411).json({
@@ -120,6 +120,8 @@ router.get("/bulk",async(req, res)=>{
     res.json({
         user:users.map(user=>({
             username:user.username,
+            firstName:user.firstName,
+            lastName:user.lastName,
             _id:user._id,
             email:user.email
         }))
